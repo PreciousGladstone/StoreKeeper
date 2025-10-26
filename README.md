@@ -1,2 +1,0 @@
-# storekeeper-app
-
