@@ -16,7 +16,7 @@ class TakePhotoBox extends StatelessWidget {
     return GestureDetector(
       onTap: onPickImage,
       child: Container(
-        height: 180,
+        height: 230,
         width: double.infinity,
         decoration: BoxDecoration(
           border: Border.all(color: Colors.grey.shade400, width: 1.5),
@@ -28,13 +28,13 @@ class TakePhotoBox extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Icon(Icons.camera_alt_outlined,
-                        size: 40, color: Colors.grey.shade500),
+                        size: 40, color: Theme.of(context).colorScheme.onSecondaryFixed),
                     const SizedBox(height: 8),
                     Container(
                       padding: const EdgeInsets.symmetric(
                           horizontal: 16, vertical: 8),
                       decoration: BoxDecoration(
-                        color: const Color(0xFFE8F2FD),
+                        color: Theme.of(context).colorScheme.onSecondaryFixed,
                         borderRadius: BorderRadius.circular(8),
                       ),
                       child: const Text(
@@ -43,9 +43,6 @@ class TakePhotoBox extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(height: 4),
-                    Text('Maximum up to 5 Images',
-                        style:
-                            TextStyle(color: Colors.grey.shade500, fontSize: 12)),
                   ],
                 ),
               )
@@ -53,7 +50,7 @@ class TakePhotoBox extends StatelessWidget {
                 scrollDirection: Axis.horizontal,
                 padding: const EdgeInsets.all(8),
                 itemCount: images.length,
-                separatorBuilder: (_, __) => const SizedBox(width: 10),
+                separatorBuilder: (ctx, index) => const SizedBox(width: 10),
                 itemBuilder: (context, index) => ClipRRect(
                   borderRadius: BorderRadius.circular(10),
                   child: Stack(

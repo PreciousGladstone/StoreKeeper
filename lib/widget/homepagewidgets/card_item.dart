@@ -37,7 +37,7 @@ class CardItem extends StatelessWidget {
       key: Key(item.id.toString()), // unique key required
       direction: DismissDirection.endToStart, // swipe left to delete
       background: Container(
-        color: Colors.redAccent,
+        color: const Color.fromARGB(255, 154, 105, 105),
         alignment: Alignment.centerRight,
         padding: const EdgeInsets.symmetric(horizontal: 20),
         child: const Icon(Icons.delete, color: Colors.white, size: 30),
@@ -51,8 +51,12 @@ class CardItem extends StatelessWidget {
             actions: [
               TextButton(
                 onPressed: () => Navigator.pop(context, false),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Theme.of(context).colorScheme.onTertiary
+                ),
                 child: const Text('Cancel'),
               ),
+              Spacer(),
               ElevatedButton(
                 onPressed: () => Navigator.pop(context, true),
                 style: ElevatedButton.styleFrom(
@@ -123,7 +127,7 @@ class CardItem extends StatelessWidget {
                   ),
                   const SizedBox(width: 20),
                   Text(
-                    '₦$price',
+                    price,
                     style: Theme.of(context).textTheme.bodyMedium,
                   ),
                 ],

@@ -7,10 +7,13 @@ final ThemeData lightTheme = ThemeData(
   brightness: Brightness.light,
   colorScheme: ColorScheme.light(
     primary: Colors.white,
-    secondary: Colors.blueAccent,
+    secondary: Color(0xFF446FFB),
     onPrimary: const Color.fromARGB(255, 86, 86, 86),
-    onSecondary: const Color.fromARGB(255, 241, 239, 239),
-    tertiary: Colors.grey.shade100
+    onSecondary: Color(0xFFF2F4F5),
+    onSecondaryFixed:  const Color.fromARGB(255, 190, 214, 255),
+    tertiary: Colors.grey.shade300,
+    onTertiary: Color(0xFFACB0B1),
+    onInverseSurface: Colors.black
   ),
   // textTheme: 
   appBarTheme: AppBarTheme(backgroundColor: Colors.white),

@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import 'package:storekeeperapp/model/item.dart';
 import 'package:storekeeperapp/provider/item_provider.dart';
 import 'package:storekeeperapp/widget/addItem/add_item_textfield.dart';
+import 'package:storekeeperapp/widget/addItem/image_picker_listtile.dart';
 import 'package:storekeeperapp/widget/addItem/take_photo_box.dart';
 
 class UrgentAddItemScreen extends StatefulWidget {
@@ -20,46 +21,51 @@ class _UrgentAddItemScreenState extends State<UrgentAddItemScreen> {
   final TextEditingController _qtyController = TextEditingController();
   final List<File> _images = [];
 
-  Future<void> _pickImage() async {
+  Future<void> _pickFromGallery() async {
     final ImagePicker picker = ImagePicker();
+    Navigator.pop(context);
+    final List<XFile>? picked = await picker.pickMultiImage(imageQuality: 90);
+    if (picked != null) {
+      setState(() {
+        if (_images.length < 5) {
+          _images.addAll(
+            picked.take(5 - _images.length).map((e) => File(e.path)),
+          );
+        }
+      });
+    }
+  }
 
+  Future<void> _pickFromcamera() async {
+    final ImagePicker picker = ImagePicker();
+    Navigator.pop(context);
+    final XFile? photo = await picker.pickImage(source: ImageSource.camera);
+    if (photo != null) {
+      setState(() {
+        if (_images.length < 5) _images.add(File(photo.path));
+      });
+    }
+  }
+
+//picking images screen
+  Future<void> _pickImage() async {
+    
+  //displays the way you want to pick your pictures
     showModalBottomSheet(
       context: context,
-      builder: (_) => SafeArea(
+      builder: (ctx) => SafeArea(
         child: Wrap(
           children: [
-            ListTile(
-              leading: const Icon(Icons.camera_alt),
-              title: const Text('Take a photo'),
-              onTap: () async {
-                Navigator.pop(context);
-                final XFile? photo =
-                    await picker.pickImage(source: ImageSource.camera);
-                if (photo != null) {
-                  setState(() {
-                    if (_images.length < 5) _images.add(File(photo.path));
-                  });
-                }
-              },
+            ImagePickerListtile(
+              onTap: _pickFromcamera,
+              icon: Icons.camera_alt,
+              text: 'Take a photo',
             ),
-            ListTile(
-              leading: const Icon(Icons.photo_library),
-              title: const Text('Choose from gallery'),
-              onTap: () async {
-                Navigator.pop(context);
-                final List<XFile>? picked =
-                    await picker.pickMultiImage(imageQuality: 90);
-                if (picked != null) {
-                  setState(() {
-                    if (_images.length < 5) {
-                      _images.addAll(picked
-                          .take(5 - _images.length)
-                          .map((e) => File(e.path)));
-                    }
-                  });
-                }
-              },
-            ),
+            ImagePickerListtile(
+              onTap: _pickFromGallery,
+              icon: Icons.photo_library,
+              text: 'Choose from gallery',
+            )
           ],
         ),
       ),
@@ -128,7 +134,7 @@ class _UrgentAddItemScreenState extends State<UrgentAddItemScreen> {
             const Text('PRODUCT NAME',
                 style: TextStyle(fontWeight: FontWeight.bold)),
             const SizedBox(height: 6),
-            AddItemTextfield(controller: _nameController, hint: 'Add Product'),
+            AddItemTextfield(controller: _nameController, hint: 'Add Product', keyboardType: TextInputType.text,),
             const SizedBox(height: 16),
 
             const Text('PRICE', style: TextStyle(fontWeight: FontWeight.bold)),
@@ -139,20 +145,21 @@ class _UrgentAddItemScreenState extends State<UrgentAddItemScreen> {
                   flex: 1,
                   child: Container(
                     height: 50,
+                    width: 40,
                     alignment: Alignment.center,
                     decoration: BoxDecoration(
                       border: Border.all(color: Colors.grey.shade400),
                       borderRadius: BorderRadius.circular(12),
                     ),
-                    child: const Text('USD'),
+                    child: const Text('NGN'),
                   ),
                 ),
                 const SizedBox(width: 10),
                 Expanded(
-                  flex: 2,
+                  flex: 6,
                   child: AddItemTextfield(
                     controller: _priceController,
-                    hint: '75',
+                    hint: 'price',
                     keyboardType: TextInputType.number,
                   ),
                 ),
@@ -163,7 +170,7 @@ class _UrgentAddItemScreenState extends State<UrgentAddItemScreen> {
             const Text('QUANTITY',
                 style: TextStyle(fontWeight: FontWeight.bold)),
             const SizedBox(height: 6),
-            AddItemTextfield(controller: _qtyController, hint: 'Quantity'),
+            AddItemTextfield(controller: _qtyController, hint: 'Quantity', keyboardType: TextInputType.number,),
 
             const SizedBox(height: 30),
 
@@ -177,7 +184,7 @@ class _UrgentAddItemScreenState extends State<UrgentAddItemScreen> {
                     borderRadius: BorderRadius.circular(12),
                   ),
                 ),
-                onPressed: _saveItem, // ✅ Now connected
+                onPressed: _saveItem, //  Now connected
                 child: const Text(
                   'UPLOAD',
                   style: TextStyle(fontWeight: FontWeight.bold),

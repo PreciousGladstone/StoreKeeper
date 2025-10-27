@@ -70,7 +70,10 @@ flutter:
 
   # To add assets to your application, add an assets section, like this:
   assets:
-    - assets/screenshots
+    - assets/screenshots/additemscreen.png
+    - assets/screenshots/Delete.png
+    - assets/screenshots/homescreen.png
+    - assets/screenshots/takeaphoto.png
   #   - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see
