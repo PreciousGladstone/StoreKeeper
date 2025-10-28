@@ -8,21 +8,31 @@ class ItemProvider extends ChangeNotifier {
 
   List<Item> get item => _filteredItem.isEmpty ? _item : _filteredItem;
 
+  //loads item from the database
   Future<void> loadItem() async {
     _item = await DBService.instance.getItem();
     notifyListeners();
   }
 
+  //adds this item to the database
   Future<void> addItem(Item item) async {
     await DBService.instance.createItem(item);
     await loadItem();
   }
 
+  //updates this item from the database
+  Future<void> updateItem(Item updatedItem) async {
+  await DBService.instance.updateItem(updatedItem);
+  await loadItem(); // reload the latest list from the database
+  notifyListeners();
+}
+  //delete item from the database
   Future<void> deleteItem(Item item) async {
     if (item.id != null) await DBService.instance.deleteItem(item.id!);
     await loadItem();
   }
 
+  //helper to search items and display them
   void searchItems(String query) {
     if (query.isEmpty) {
       _filteredItem = [];
@@ -34,6 +44,12 @@ class ItemProvider extends ChangeNotifier {
           .toList();
     }
   }
+
+  //low stocks(<10)
+  List<Item> get lowStockItems => _item.where((i) => i.quantity< 10).toList();
+
+  //over Stocked (>100)
+  List<Item> get highStockItems => _item.where((i)=> i.quantity> 100).toList();
 
   //get the total number of producct 
   int get totalProduct => _item.length;

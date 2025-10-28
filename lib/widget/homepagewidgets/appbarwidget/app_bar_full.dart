@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:storekeeperapp/widget/appbarwidget/app_bar_button.dart';
-import 'package:storekeeperapp/widget/appbarwidget/app_bar_text.dart';
+import 'package:storekeeperapp/widget/homepagewidgets/appbarwidget/app_bar_button.dart';
+import 'package:storekeeperapp/widget/homepagewidgets/appbarwidget/app_bar_text.dart';
 
 class AppBarFull extends StatelessWidget {
   const AppBarFull({super.key, required this.add, required this.checkNotification});

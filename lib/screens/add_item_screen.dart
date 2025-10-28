@@ -1,109 +1,199 @@
-// import 'dart:io';
+import 'dart:io';
+import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:provider/provider.dart';
+import 'package:storekeeperapp/model/item.dart';
+import 'package:storekeeperapp/provider/item_provider.dart';
+import 'package:storekeeperapp/widget/addItem/add_item_textfield.dart';
+import 'package:storekeeperapp/widget/addItem/image_picker_listtile.dart';
+import 'package:storekeeperapp/widget/addItem/take_photo_box.dart';
 
-// import 'package:flutter/material.dart';
-// import 'package:image_picker/image_picker.dart';
-// import 'package:path_provider/path_provider.dart';
-// import 'package:path/path.dart' as p;
-// import 'package:provider/provider.dart';
-// import 'package:storekeeperapp/model/item.dart';
-// import 'package:storekeeperapp/provider/item_provider.dart';
+class UrgentAddItemScreen extends StatefulWidget {
+  const UrgentAddItemScreen({super.key});
 
-// class AddItemScreen extends StatefulWidget {
-//   const AddItemScreen({super.key});
+  @override
+  State<UrgentAddItemScreen> createState() => _UrgentAddItemScreenState();
+}
 
-//   @override
-//   State<AddItemScreen> createState() => _AddItemScreenState();
-// }
+class _UrgentAddItemScreenState extends State<UrgentAddItemScreen> {
+  final TextEditingController _nameController = TextEditingController();
+  final TextEditingController _priceController = TextEditingController();
+  final TextEditingController _qtyController = TextEditingController();
+  final List<File> _images = [];
 
-// class _AddItemScreenState extends State<AddItemScreen> {
-//   final _name = TextEditingController();
-//   final _qty = TextEditingController();
-//   final _price = TextEditingController();
+  Future<void> _pickFromGallery() async {
+    final ImagePicker picker = ImagePicker();
+    Navigator.pop(context);
+    final List<XFile>? picked = await picker.pickMultiImage(imageQuality: 90);
+    if (picked != null) {
+      setState(() {
+        if (_images.length < 5) {
+          _images.addAll(
+            picked.take(5 - _images.length).map((e) => File(e.path)),
+          );
+        }
+      });
+    }
+  }
 
-//   //holding the saved photopath
-//   String? _photoPath;
+  Future<void> _pickFromcamera() async {
+    final ImagePicker picker = ImagePicker();
+    Navigator.pop(context);
+    final XFile? photo = await picker.pickImage(source: ImageSource.camera);
+    if (photo != null) {
+      setState(() {
+        if (_images.length < 5) _images.add(File(photo.path));
+      });
+    }
+  }
 
-//   // logic for. get image through the imagepicker after snapping
-//   Future<void> _takePhoto() async {
-//     final picker = ImagePicker();
-//     final picked = await picker.pickImage(
-//       source: ImageSource.camera,
-//       imageQuality: 100,
-//     );
-//     if (picked == null) return;
-//     final appDoc = await getApplicationDocumentsDirectory();
-//     final fileName =
-//         'item_${DateTime.now().microsecondsSinceEpoch}${p.extension(picked.path)}';
-//     final saved = await File(picked.path).copy(p.join(appDoc.path, fileName));
-//     setState(() {
-//       _photoPath = saved.path;
-//     });
-//   }
-
-//   Future<void> _save() async {
-//     final name = _name.text.trim();
-//     if (name.isEmpty) return;
-//     final qty = int.tryParse(_qty.text) ?? 1;
-//     final price = double.tryParse(_price.text) ?? 0.0;
+//picking images screen
+  Future<void> _pickImage() async {
     
-//     final item = Item(
-//       name: name,
-//       quantity: qty,
-//       price: price,
-//       imagePath: _photoPath,
-//       createdAt: DateTime.now(),
-//     );
+  //displays the way you want to pick your pictures
+    showModalBottomSheet(
+      context: context,
+      builder: (ctx) => SafeArea(
+        child: Wrap(
+          children: [
+            ImagePickerListtile(
+              onTap: _pickFromcamera,
+              icon: Icons.camera_alt,
+              text: 'Take a photo',
+            ),
+            ImagePickerListtile(
+              onTap: _pickFromGallery,
+              icon: Icons.photo_library,
+              text: 'Choose from gallery',
+            )
+          ],
+        ),
+      ),
+    );
+  }
 
-//     await context.read<ItemProvider>().addItem(item);
+  Future<void> _saveItem() async {
+    final name = _nameController.text.trim();
+    final qty = int.tryParse(_qtyController.text) ?? 1;
+    final price = double.tryParse(_priceController.text) ?? 0.0;
 
-//     if (mounted) Navigator.pop(context);
-//   }
+    if (name.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Please enter a product name')),
+      );
+      return;
+    }
 
-//   @override
-//   Widget build(BuildContext context) {
-//     return Scaffold(
-//       appBar: AppBar(
-//         backgroundColor: Theme.of(context).colorScheme.primary,
-//         title: Text('Add Item'),
-//       ),
-//       body: Padding(
-//         padding: const EdgeInsets.all(8.0),
-//         child: Column(
-//           children: [
-//             TextField(
-//               controller: _name,
-//               decoration: InputDecoration(labelText: 'Product Name'),
-//             ),
-//             TextField(
-//               controller: _qty,
-//               decoration: InputDecoration(labelText: 'Qty', labelStyle: Theme.of(context).textTheme.labelLarge!.copyWith(
-//                 color: Theme.of(context).hintColor
-//               )),
-//               keyboardType: TextInputType.number,
-//             ),
-//             TextField(
-//               controller: _price,
-//               decoration: InputDecoration(labelText: 'Price'),
-//               keyboardType: TextInputType.number,
-//             ),
-//             SizedBox(height: 8),
-//             if (_photoPath != null) Image.file(File(_photoPath!), height: 150),
-//             Row(
-//               children: [
-//                 ElevatedButton(
-//                   onPressed: _takePhoto,
-//                   child: Icon(Icons.camera),
-//                 ),
-//                 Spacer(),
-//                 ElevatedButton(
-//                   onPressed: _save,
-//                   child: Text('Save', style: TextStyle()),
-//                 ),
-//               ],
-//             ),
-//           ],
-//         ),
-//       ),
-//     );
-//   }
-// }
+    final imagePath = _images.isNotEmpty ? _images.first.path : null;
+
+    final newItem = Item(
+      name: name,
+      quantity: qty,
+      price: price,
+      imagePath: imagePath,
+      createdAt: DateTime.now(),
+    );
+
+    await context.read<ItemProvider>().addItem(newItem);
+
+    if (mounted) {
+      Navigator.pop(context);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
+    return Scaffold(
+      backgroundColor: theme.colorScheme.primary,
+      appBar: AppBar(
+        title: const Text(
+          'Add New Product',
+          style: TextStyle(fontWeight: FontWeight.w600),
+        ),
+        centerTitle: true,
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.close),
+            onPressed: () => Navigator.pop(context),
+          ),
+        ],
+      ),
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            TakePhotoBox(
+              onPickImage: _pickImage,
+              images: _images,
+            ),
+            const SizedBox(height: 20),
+
+            const Text('PRODUCT NAME',
+                style: TextStyle(fontWeight: FontWeight.bold)),
+            const SizedBox(height: 6),
+            AddItemTextfield(controller: _nameController, hint: 'Add Product', keyboardType: TextInputType.text,),
+            const SizedBox(height: 16),
+
+            const Text('PRICE', style: TextStyle(fontWeight: FontWeight.bold)),
+            const SizedBox(height: 6),
+            Row(
+              children: [
+                Expanded(
+                  flex: 1,
+                  child: Container(
+                    height: 50,
+                    width: 40,
+                    alignment: Alignment.center,
+                    decoration: BoxDecoration(
+                      border: Border.all(color: Colors.grey.shade400),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: const Text('NGN'),
+                  ),
+                ),
+                const SizedBox(width: 10),
+                Expanded(
+                  flex: 6,
+                  child: AddItemTextfield(
+                    controller: _priceController,
+                    hint: 'price',
+                    keyboardType: TextInputType.number,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 16),
+
+            const Text('QUANTITY',
+                style: TextStyle(fontWeight: FontWeight.bold)),
+            const SizedBox(height: 6),
+            AddItemTextfield(controller: _qtyController, hint: 'Quantity', keyboardType: TextInputType.number,),
+
+            const SizedBox(height: 30),
+
+            SizedBox(
+              width: double.infinity,
+              height: 55,
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: theme.colorScheme.secondary,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                ),
+                onPressed: _saveItem, //  Now connected
+                child: const Text(
+                  'UPLOAD',
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}

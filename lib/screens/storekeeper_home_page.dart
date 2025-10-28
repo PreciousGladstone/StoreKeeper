@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:storekeeperapp/provider/item_provider.dart';
-import 'package:storekeeperapp/screens/urgent_add_item_screen.dart';
-import 'package:storekeeperapp/widget/appbarwidget/app_bar_full.dart';
+import 'package:storekeeperapp/screens/add_item_screen.dart';
+import 'package:storekeeperapp/widget/homepagewidgets/appbarwidget/app_bar_full.dart';
 import 'package:storekeeperapp/widget/homepagewidgets/card_analysis_item.dart';
-import 'package:storekeeperapp/widget/homepagewidgets/card_item.dart';
+import 'package:storekeeperapp/widget/homepagewidgets/listview_item.dart';
 import 'package:storekeeperapp/widget/homepagewidgets/searchtextfield.dart';
 
 
@@ -41,10 +41,7 @@ class _StorekeeperHomePageState extends State<StorekeeperHomePage> {
 
   @override
   Widget build(BuildContext context) {
-    //this is the item provider, gets the add items from the Db, 
-    final item = context.watch<ItemProvider>().item;
-
-
+    
     //this functions takes us to the add product and waits for the values receieved
     Future<void> add() async {
       Navigator.push(
@@ -53,8 +50,8 @@ class _StorekeeperHomePageState extends State<StorekeeperHomePage> {
       );
       await context.read<ItemProvider>().loadItem();
     }
-
-    return Scaffold(
+    
+    return Scaffold( 
       backgroundColor: Theme.of(context).colorScheme.primary,
       body: SafeArea(
         child: Padding(
@@ -92,65 +89,54 @@ class _StorekeeperHomePageState extends State<StorekeeperHomePage> {
               ),
               SizedBox(height: 17,),
               
+              //dynamic stat card , this update the total products , total quantity of products and total prices 
               Row(
                 children: [
                   CardAnalysisItem(
                     icon: Icons.inventory_2_rounded,
-                    color: Colors.white,
-                    value: context.watch<ItemProvider>().formattedTotalProduct.toString(),
-                    title: 'TOTAL \nPROODUCT', boxColor: Theme.of(context).colorScheme.secondary, totalColor: Theme.of(context).colorScheme.tertiary,
+                    color: Theme.of(context).colorScheme.primary,
+                    value: context
+                        .watch<ItemProvider>()
+                        .formattedTotalProduct
+                        .toString(),
+                    title: 'TOTAL \nPROODUCT',
+                    boxColor: Theme.of(context).colorScheme.secondary,
+                    totalColor: Theme.of(context).colorScheme.tertiary,
                   ),
                   SizedBox(width: 12),
                   CardAnalysisItem(
                     icon: Icons.shopping_bag_outlined,
                     color: Theme.of(context).colorScheme.secondary,
-                    value: context.watch<ItemProvider>().formattedTotalQuantity.toString(),
-                    title: 'TOTAL \nQUANTITY', boxColor: Theme.of(context).colorScheme.onSecondary, totalColor: Theme.of(context).colorScheme.onTertiary,
+                    value: context
+                        .watch<ItemProvider>()
+                        .formattedTotalQuantity
+                        .toString(),
+                    title: 'TOTAL \nQUANTITY',
+                    boxColor: Theme.of(context).colorScheme.onSecondary,
+                    totalColor: Theme.of(context).colorScheme.onTertiary,
                   ),
                   SizedBox(width: 12),
                   CardAnalysisItem(
                     icon: Icons.monetization_on_outlined,
                     color: Theme.of(context).colorScheme.secondary,
                     value: context.watch<ItemProvider>().formattedTotalPrice,
-                    title: 'TOTAL \nPRICE ', boxColor:Theme.of(context).colorScheme.onSecondary, totalColor: Theme.of(context).colorScheme.onTertiary,
-                  )
+                    title: 'TOTAL \nPRICE ',
+                    boxColor: Theme.of(context).colorScheme.onSecondary,
+                    totalColor: Theme.of(context).colorScheme.onTertiary,
+                  ),
                 ],
               ),
               SizedBox(height: 20,),
-              Row(children: [Text('data'),Spacer(), Text('data') ],),
-              
-              Expanded(
-                flex: 5,
-                child: item.isEmpty
-                    ? Center(
-                        child: Text(
-                          'No Items yet',
-                          style: Theme.of(context).textTheme.bodyMedium!
-                              .copyWith(
-                                color: Theme.of(context).colorScheme.onPrimary,
-                              ),
-                        ),
-                      )
-                    : Container(
-                        padding: EdgeInsets.symmetric(vertical: 20),
-                        decoration: BoxDecoration(
-                          color: Theme.of(context).colorScheme.primary,
-                          borderRadius: BorderRadius.only(
-                            topLeft: Radius.circular(40),
-                            topRight: Radius.circular(40),
-                          ),
-                        ),
-                        child: ListView.builder(
-                          itemCount: item.length,
-                          itemBuilder: (ctx, index) => CardItem(
-                            title: item[index].name,
-                            qty: '${item[index].quantity}',
-                            price: 'Price: \$${item[index].price}',
-                            item: item[index],
-                          ),
-                        ),
-                      ),
+              Align(
+                alignment: AlignmentGeometry.topLeft,
+                child: Text(
+                  'Recent Product',
+                  style: Theme.of(context).textTheme.headlineSmall!.copyWith(
+                    fontWeight: FontWeight.w600 ,fontSize: 20
+                  ),
+                ),
               ),
+              ListviewItem()
             ],
           ),
         ),

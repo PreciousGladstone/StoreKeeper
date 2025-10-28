@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:storekeeperapp/provider/item_provider.dart';
 import 'package:storekeeperapp/provider/theme_provider.dart';
-import 'package:storekeeperapp/screens/storekeeper_home_page.dart';
+import 'package:storekeeperapp/screens/Home_page.dart';
 import 'package:storekeeperapp/services/db_service.dart';
 import 'package:storekeeperapp/theme/custom_dark_theme.dart';
 import 'package:storekeeperapp/theme/custom_light_theme.dart';
@@ -36,7 +36,7 @@ class MyApp extends StatelessWidget {
     final themeProv = context.watch<ThemeProvider>();
     return MaterialApp(
         debugShowCheckedModeBanner: false,
-        home: StorekeeperHomePage(),
+        home: HomePage(),
         theme: lightTheme,
         darkTheme: darkTheme,
         themeMode: themeProv.themeMode,
