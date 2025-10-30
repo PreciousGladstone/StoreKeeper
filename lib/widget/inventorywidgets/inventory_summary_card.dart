@@ -34,20 +34,19 @@ class InventorySummaryCard extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
 
             children: [
-              Row(
-                children: [
+              Icon(icon, color: color, size: 26),
                   Text(
                     value,
+                    overflow: TextOverflow.fade,
                     style: Theme.of(context).textTheme.titleMedium!.copyWith(
                       color: color,
                       fontWeight: FontWeight.bold,
                       fontSize: 24,
                     ),
                   ),
-                  Spacer(),
-                  Icon(icon, color: color, size: 26),
-                ],
-              ),
+                  
+                  
+                
 
               const SizedBox(height: 6),
 

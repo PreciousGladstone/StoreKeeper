@@ -46,10 +46,10 @@ class ItemProvider extends ChangeNotifier {
   }
 
   //low stocks(<10)
-  List<Item> get lowStockItems => _item.where((i) => i.quantity< 10).toList();
+  List<Item> get lowStockItems => _item.where((item) => item.quantity < 10).toList();
 
   //over Stocked (>100)
-  List<Item> get highStockItems => _item.where((i)=> i.quantity> 100).toList();
+  List<Item> get highStockItems => _item.where((item)=> item.quantity > 100).toList();
 
   //get the total number of producct 
   int get totalProduct => _item.length;

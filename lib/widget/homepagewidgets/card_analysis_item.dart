@@ -38,28 +38,29 @@ class CardAnalysisItem extends StatelessWidget {
         child: Padding(
           padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 17),
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+            
+
+            
 
             children: [
-              Row(
-                children: [
+              Icon(icon, color: color, size: 20),
+            
                   Text(
                     value,
+                    overflow: TextOverflow.fade,
                     style: Theme.of(context).textTheme.titleMedium!.copyWith(
                       color: color,
                       fontWeight: FontWeight.bold,
                       fontSize: 24,
                     ),
                   ),
-                  Spacer(),
-                  Icon(icon, color: color, size: 26),
-                ],
-              ),
+                
 
               const SizedBox(height: 6),
 
               Text(
                 title,
+                textAlign: TextAlign.center,
                 style: Theme.of(context).textTheme.bodySmall!.copyWith(
                   color: totalColor,
                   fontSize: 12,
